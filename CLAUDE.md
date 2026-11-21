@@ -73,6 +73,8 @@ English.
   "How do I get my CSV?" `<details>` guide sits under the upload buttons. PDFs (by name,
   type, or "%PDF" content) show "This looks like a PDF statement..." and open the guide;
   the file picker accepts .pdf on purpose.
+- v0.4.1: expandable "How can I check?" under the privacy line (Wi-Fi-off test + link to
+  the public GitHub repo).
 
 ## Publishing
 - Public repo: https://github.com/sandraliu83/spend-snapshot (branch `main`).

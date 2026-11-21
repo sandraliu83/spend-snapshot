@@ -32,6 +32,11 @@ h1 { margin: 0 0 4px; font-size: 2rem; }
 h2 { margin: 32px 0 12px; font-size: 1.25rem; }
 .tagline { margin: 0; color: var(--muted); }
 .privacy { margin: 8px 0 24px; font-weight: 600; color: var(--accent); }
+/* "How can I check?" under the privacy line (v0.4.1) */
+.privacy-check { margin: -16px 0 24px; font-size: 0.9rem; color: var(--muted); }
+.privacy-check summary { cursor: pointer; color: var(--accent); text-decoration: underline; width: fit-content; }
+.privacy-check ul { margin: 6px 0 0; padding-left: 20px; }
+.privacy-check a { color: var(--accent); }
 .source { font-weight: normal; font-size: 0.9rem; color: var(--muted); }
 .hint { margin: -4px 0 12px; color: var(--muted); font-size: 0.9rem; }
 
