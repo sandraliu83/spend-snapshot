@@ -68,3 +68,13 @@ English.
   3. Spending pace: days 1..D of latest month vs. average of days 1..D in earlier months,
      per flexible category; show the largest increase among those that are >= $30 AND >= 25%,
      else "No unusual changes so far this month."
+- v0.4 (fixes from user testing): "Excluded rows" card renamed "Not counted" with a
+  plain-English sentence ("5 card payments and 2 refunds aren't spending..."). A
+  "How do I get my CSV?" `<details>` guide sits under the upload buttons. PDFs (by name,
+  type, or "%PDF" content) show "This looks like a PDF statement..." and open the guide;
+  the file picker accepts .pdf on purpose.
+
+## Publishing
+- Public repo: https://github.com/sandraliu83/spend-snapshot (branch `main`).
+- Live site (GitHub Pages, main branch root): https://sandraliu83.github.io/spend-snapshot/
+- Commit author for this repo: Sandra Liu, GitHub noreply email (set in local git config).

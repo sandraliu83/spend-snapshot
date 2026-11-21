@@ -84,6 +84,12 @@ document.getElementById("exclude-rent").addEventListener("change", function () {
 // ---------- Reading the file ----------
 
 function readFile(file) {
+  // A PDF is almost always a monthly statement, not the CSV we need. (v0.4)
+  if (isPdfFile(file)) {
+    showPdfHelp();
+    return;
+  }
+
   // FileReader reads the file locally, inside the browser.
   var reader = new FileReader();
   reader.onload = function () {
@@ -107,7 +113,9 @@ function analyze(text, sourceName) {
   setTimeout(function () {
     try {
       var result = processCsv(text);
-      if (result.error) {
+      if (result.isPdf) {
+        showPdfHelp();
+      } else if (result.error) {
         showError(result.error);
       } else {
         showResults(result, sourceName);
@@ -124,6 +132,11 @@ function analyze(text, sourceName) {
 function processCsv(text) {
   // Remove an invisible "byte order mark" some programs add at the start of files.
   text = text.replace(/^﻿/, "");
+
+  // Every PDF file starts with "%PDF". This catches a PDF that was renamed to .csv.
+  if (text.indexOf("%PDF") === 0) {
+    return { isPdf: true };
+  }
 
   var rows = parseCsv(text);
   if (rows.length === 0) {
@@ -288,13 +301,7 @@ function showResults(result, sourceName) {
   document.getElementById("count").textContent = purchases.length;
   document.getElementById("range").textContent = formatDate(minDate) + " – " + formatDate(maxDate);
   document.getElementById("excluded").textContent = result.excludedCount;
-
-  // e.g. "Payment: 5, Return: 2"
-  var detailParts = Object.keys(result.excludedByType).map(function (t) {
-    return t + ": " + result.excludedByType[t];
-  });
-  document.getElementById("excluded-detail").textContent =
-    detailParts.length ? detailParts.join(", ") + " (not counted as spending)" : "";
+  document.getElementById("excluded-detail").textContent = notCountedSentence(result.excludedByType);
 
   // --- Category table ---
   var byCategory = {};
@@ -784,6 +791,66 @@ function findMonth(months, date) {
 
 function colorFor(category) {
   return CATEGORY_COLORS[category] || CATEGORY_COLORS["Other"];
+}
+
+// Explains the "Not counted" number in plain words (v0.4), e.g.
+// "5 card payments and 2 refunds aren't spending, so they're left out of the totals."
+function notCountedSentence(byType) {
+  var parts = [];   // things that aren't spending
+  var total = 0;
+  Object.keys(byType).forEach(function (type) {
+    var n = byType[type];
+    if (type === "Unreadable row") { return; } // explained separately below
+    total += n;
+    if (type === "Payment") {
+      parts.push(n + (n === 1 ? " card payment" : " card payments"));
+    } else if (type === "Return") {
+      parts.push(n + (n === 1 ? " refund" : " refunds"));
+    } else {
+      parts.push(n + ' "' + type + '"' + (n === 1 ? " row" : " rows"));
+    }
+  });
+
+  var sentence = "";
+  if (parts.length) {
+    sentence = joinWithAnd(parts) +
+      (total === 1 ? " isn't spending, so it's left out of the totals."
+                   : " aren't spending, so they're left out of the totals.");
+  }
+
+  var unreadable = byType["Unreadable row"] || 0;
+  if (unreadable) {
+    sentence += (sentence ? " " : "") + unreadable +
+      (unreadable === 1 ? " row couldn't be read and was skipped."
+                        : " rows couldn't be read and were skipped.");
+  }
+
+  return sentence || "Every row in the file was counted.";
+}
+
+// ["a"] -> "a";  ["a", "b"] -> "a and b";  ["a", "b", "c"] -> "a, b, and c"
+function joinWithAnd(items) {
+  if (items.length <= 1) { return items.join(""); }
+  if (items.length === 2) { return items[0] + " and " + items[1]; }
+  return items.slice(0, -1).join(", ") + ", and " + items[items.length - 1];
+}
+
+// ---------- PDF handling (v0.4) ----------
+
+// True if the file looks like a PDF, by its name or its type.
+function isPdfFile(file) {
+  return /\.pdf$/i.test(file.name || "") || file.type === "application/pdf";
+}
+
+// Friendly message + open the "How do I get my CSV?" steps.
+function showPdfHelp() {
+  showError([
+    "This looks like a PDF statement. Spend Snapshot needs a CSV file.",
+    "Follow the steps under \"How do I get my CSV?\" above to download one."
+  ]);
+  var guide = document.getElementById("csv-guide");
+  guide.open = true;
+  guide.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 // Adds one table row. We use textContent (never innerHTML) for file data,

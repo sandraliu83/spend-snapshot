@@ -9,7 +9,9 @@ Don't have a file handy? Click **Try with sample data** to load a made-up exampl
 ## What it shows
 
 - **Summary:** total spending, number of purchases, date range, and how many rows were
-  excluded (payments and returns are not counted as spending).
+  not counted (card payments and refunds aren't spending).
+- **"How do I get my CSV?"** step-by-step download instructions under the upload buttons.
+  Uploading a PDF statement shows a friendly message and opens these steps.
 - **Suggestions:** up to 3 cards, each showing the numbers it is based on.
 - **Charts:** spending by category, and monthly spending stacked by category. An
   "Exclude rent" checkbox hides Rent from the charts so other categories are easier to compare.

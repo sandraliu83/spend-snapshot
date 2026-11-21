@@ -23,9 +23,24 @@
       <p>or</p>
       <label class="button">
         Choose a file
-        <input type="file" id="file-input" accept=".csv,text/csv" hidden>
+        <!-- .pdf is allowed on purpose, so we can explain that a PDF statement won't work -->
+        <input type="file" id="file-input" accept=".csv,text/csv,.pdf,application/pdf" hidden>
       </label>
       <button type="button" id="sample-button" class="button secondary">Try with sample data</button>
+
+      <!-- CSV download guide (v0.4). <details> expands/collapses on click, no JavaScript needed.
+           app.js opens it automatically if someone uploads a PDF. -->
+      <details id="csv-guide" class="guide">
+        <summary>How do I get my CSV?</summary>
+        <ol>
+          <li>Use chase.com on a computer. The Chase mobile app only gives PDF statements.</li>
+          <li>Sign in and open your credit card account.</li>
+          <li>Click the download icon above your transactions ("Download account activity").</li>
+          <li>For file type, choose "Spreadsheet (Excel, CSV)", pick a date range, and click Download.</li>
+          <li>Then drag the downloaded file here, or click "Choose a file".</li>
+        </ol>
+        <p class="guide-note">Got a PDF? That's a monthly statement. Spend Snapshot needs the activity download (CSV) instead.</p>
+      </details>
     </section>
 
     <!-- Status messages: "Analyzing..." and errors -->
@@ -39,7 +54,7 @@
         <div class="stat"><span class="label">Total spending</span><span id="total" class="value"></span></div>
         <div class="stat"><span class="label">Purchases</span><span id="count" class="value"></span></div>
         <div class="stat"><span class="label">Date range</span><span id="range" class="value"></span></div>
-        <div class="stat"><span class="label">Excluded rows</span><span id="excluded" class="value"></span><span id="excluded-detail" class="detail"></span></div>
+        <div class="stat"><span class="label">Not counted</span><span id="excluded" class="value"></span><span id="excluded-detail" class="detail"></span></div>
       </div>
 
       <!-- Suggestions (v0.3). Up to 3 cards, filled in by app.js -->
