@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Privacy safety net: tells the browser to block any code on this page from
+       sending data over the network (fetch, XHR, websockets, beacons, form posts). -->
+  <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'">
+  <title>Spend Snapshot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Spend Snapshot</h1>
+      <p class="tagline">Upload a Chase credit card CSV to see where your money goes.</p>
+      <p class="privacy">🔒 Your data never leaves your browser.</p>
+    </header>
+
+    <!-- Upload area: click to pick a file, or drag one onto it -->
+    <section id="drop-zone" class="drop-zone">
+      <p><strong>Drag &amp; drop your Chase CSV here</strong></p>
+      <p>or</p>
+      <label class="button">
+        Choose a file
+        <input type="file" id="file-input" accept=".csv,text/csv" hidden>
+      </label>
+      <button type="button" id="sample-button" class="button secondary">Try with sample data</button>
+    </section>
+
+    <!-- Status messages: "Analyzing..." and errors -->
+    <p id="status" class="status" hidden>Analyzing...</p>
+    <div id="error" class="error" role="alert" hidden></div>
+
+    <!-- Results (hidden until a file is analyzed) -->
+    <section id="results" hidden>
+      <h2>Summary <span id="source-name" class="source"></span></h2>
+      <div class="summary">
+        <div class="stat"><span class="label">Total spending</span><span id="total" class="value"></span></div>
+        <div class="stat"><span class="label">Purchases</span><span id="count" class="value"></span></div>
+        <div class="stat"><span class="label">Date range</span><span id="range" class="value"></span></div>
+        <div class="stat"><span class="label">Excluded rows</span><span id="excluded" class="value"></span><span id="excluded-detail" class="detail"></span></div>
+      </div>
+
+      <!-- Suggestions (v0.3). Up to 3 cards, filled in by app.js -->
+      <h2>Suggestions</h2>
+      <div id="suggestions" class="suggestions"></div>
+
+      <!-- Charts (v0.2). Drawn by app.js using Chart.js from vendor/ -->
+      <section id="charts">
+        <label class="checkbox">
+          <input type="checkbox" id="exclude-rent"> Exclude rent
+        </label>
+        <p class="hint">Rent is usually a fixed cost, so hiding it makes other categories easier to compare.</p>
+
+        <div class="chart-card">
+          <h3>Spending by category</h3>
+          <div class="chart-box tall"><canvas id="category-chart"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Monthly spending</h3>
+          <div class="chart-box tall"><canvas id="monthly-chart"></canvas></div>
+        </div>
+      </section>
+      <p id="chart-error" class="hint" hidden>Charts couldn't load (vendor/chart.umd.js is missing).</p>
+
+      <h2>Spending by category</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Category</th><th class="num">Total</th><th class="num">% of total</th><th class="num">Transactions</th></tr>
+          </thead>
+          <tbody id="category-body"></tbody>
+        </table>
+      </div>
+
+      <h2>Transactions</h2>
+      <p class="hint">Purchases only, newest first. "Rule" shows which keyword from rules.js matched.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Description</th><th class="num">Amount</th><th>Category</th><th>Rule</th></tr>
+          </thead>
+          <tbody id="transaction-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Order matters: libraries, rules and sample data first, then the app that uses them.
+       Chart.js is saved locally in vendor/ (never loaded from a CDN). -->
+  <script src="vendor/chart.umd.js"></script>
+  <script src="rules.js"></script>
+  <script src="sample-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
